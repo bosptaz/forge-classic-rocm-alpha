@@ -4,5 +4,5 @@ Native AMD ROCm port of [SD WebUI Forge Classic](https://github.com/Haoming02/sd
 
 
 to launch
-./webui.sh
+./webui-user.sh
 
