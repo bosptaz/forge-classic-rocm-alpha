@@ -7,26 +7,17 @@ import subprocess
 
 def get_gpu_names() -> set[str]:
     gpu_names = set()
-    out = subprocess.check_output(["nvidia-smi", "-L"])
-    for l in out.split(b"\n"):
+    out = subprocess.check_output(["rocm-smi", "--showproductname"], text=True)
+    for l in out.splitlines():
         if len(l) > 0:
-            gpu_names.add(l.decode("utf-8").split(" (UUID")[0])
+            gpu_names.add(l.strip())
     return gpu_names
 
 
 def cuda_malloc_supported() -> bool:
-    blacklist = {"GeForce GTX TITAN X", "GeForce GTX 980", "GeForce GTX 970", "GeForce GTX 960", "GeForce GTX 950", "GeForce 945M", "GeForce 940M", "GeForce 930M", "GeForce 920M", "GeForce 910M", "GeForce GTX 750", "GeForce GTX 745", "Quadro K620", "Quadro K1200", "Quadro K2200", "Quadro M500", "Quadro M520", "Quadro M600", "Quadro M620", "Quadro M1000", "Quadro M1200", "Quadro M2000", "Quadro M2200", "Quadro M3000", "Quadro M4000", "Quadro M5000", "Quadro M5500", "Quadro M6000", "GeForce MX110", "GeForce MX130", "GeForce 830M", "GeForce 840M", "GeForce GTX 850M", "GeForce GTX 860M", "GeForce GTX 1650", "GeForce GTX 1630", "Tesla M4", "Tesla M6", "Tesla M10", "Tesla M40", "Tesla M60"}
-
-    try:
-        names = get_gpu_names()
-    except Exception:
-        names = set()
-    for x in names:
-        if "NVIDIA" in x:
-            for b in blacklist:
-                if b in x:
-                    return False
-    return True
+    # ROCm-only fork: cudaMallocAsync-style allocation is a NVIDIA feature.
+    # On ROCm the torch HIP allocator handles this natively, so skip it.
+    return False
 
 
 try:

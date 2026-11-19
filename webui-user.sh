@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
-# export PYTHON=
-# export GIT=
-# export VENV_DIR=
+# ROCm-only configuration: forces the environment to the project's .venv
+# and enables the uv installer hook.
+export VENV_DIR="$(cd "$(dirname "$0")" && pwd)/.venv"
+export TORCH_COMMAND="pip install torch==2.12.1 torchvision==0.27.1 --index-url https://download.pytorch.org/whl/rocm7.1"
 
-# export TORCH_COMMAND="pip install torch==2.12.0 torchvision==0.27.0"
-
-export COMMANDLINE_ARGS="--uv"
+export COMMANDLINE_ARGS="--uv --api"
 
 # --skip-python-version-check --skip-torch-cuda-test --skip-version-check --skip-prepare-environment --skip-install
 
-exec "$(dirname "$0")/webui.sh"
+exec "$(dirname "$0")/webui.sh" $COMMANDLINE_ARGS

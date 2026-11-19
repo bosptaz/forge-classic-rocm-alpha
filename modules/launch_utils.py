@@ -284,8 +284,12 @@ def requirements_met(requirements_file):
 
 
 def prepare_environment():
-    torch_index_url = os.environ.get("TORCH_INDEX_URL", "https://download.pytorch.org/whl/cu130")
-    torch_command = os.environ.get("TORCH_COMMAND", f"pip install torch==2.14.0+cu130 torchvision==0.29.0+cu130 --extra-index-url {torch_index_url}")
+    # ROCm-only fork: install PyTorch from the official ROCm wheel index.
+    # Do NOT add --extra-index-url pypi.org: PyPI hosts CUDA builds (+cuXXX) and
+    # the resolver will prefer them, yielding hip=None. The rocm index is self-contained.
+    # Override with TORCH_INDEX_URL / TORCH_COMMAND if you need a different build.
+    torch_index_url = os.environ.get("TORCH_INDEX_URL", "https://download.pytorch.org/whl/rocm7.1")
+    torch_command = os.environ.get("TORCH_COMMAND", f"pip install torch==2.12.1 torchvision==0.27.1 --index-url {torch_index_url}")
     xformers_package = os.environ.get("XFORMERS_PACKAGE", f"xformers==0.0.35 --extra-index-url {torch_index_url}")
     pynvml_package = os.environ.get("PYNVML_PACKAGE", "nvidia-ml-py==13.615.71")
 

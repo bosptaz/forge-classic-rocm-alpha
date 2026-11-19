@@ -29,6 +29,7 @@ def initialize_forge():
     from backend.args import args
 
     if args.gpu_device_id is not None:
+        os.environ["HIP_VISIBLE_DEVICES"] = str(args.gpu_device_id)
         os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_device_id)
         print("Set device to:", args.gpu_device_id)
 

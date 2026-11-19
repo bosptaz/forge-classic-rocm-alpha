@@ -97,7 +97,11 @@ def check_versions():
     import torch
     from packaging import version
 
-    if torch.cuda.is_available() and torch.cuda.get_device_properties().major < 8:
+    if torch.version.hip:
+        # ROCm-only fork: ROCm PyTorch builds lag behind CUDA (latest ~2.13.x vs CUDA 2.14.x).
+        # Accept any 2.12+ ROCm build to avoid a false "outdated" warning.
+        expected_torch = "2.12.0"
+    elif torch.cuda.is_available() and torch.cuda.get_device_properties().major < 8:
         expected_torch = "2.10.0"
     else:
         expected_torch = "2.14.0"
