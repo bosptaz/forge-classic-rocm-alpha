@@ -7,9 +7,11 @@ if [ -f "webui.settings.sh" ]; then
     source webui.settings.sh
 fi
 
-# Defaults
-PYTHON="${PYTHON:-python3}"
-VENV_DIR="${VENV_DIR:-$(cd "$(dirname "$0")" && pwd)/venv}"
+# Defaults (ROCm-only)
+PYTHON="${PYTHON:-python3.13}"
+VENV_DIR="${VENV_DIR:-$(cd "$(dirname "$0")" && pwd)/.venv}"
+export UV_PYTHON=python3.13
+export TORCH_COMMAND="${TORCH_COMMAND:-pip install torch==2.12.1 torchvision==0.27.1 --index-url https://download.pytorch.org/whl/rocm7.1}"
 SD_WEBUI_RESTART="tmp/restart"
 ERROR_REPORTING="FALSE"
 
@@ -69,7 +71,7 @@ fi
 
 # Launch
 if [ -z "$goto_show_logs" ]; then
-    "$PYTHON" launch.py "$@"
+    "$PYTHON" launch.py --uv "$@"
 
     if [ -f "$SD_WEBUI_RESTART" ]; then
         exec "$0" "$@"
